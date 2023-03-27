@@ -1,4 +1,3 @@
-const { app } = require("../db/app");
 const request = require("supertest");
 const {
   categoryData,
@@ -8,6 +7,7 @@ const {
 } = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
+const app = require("../db/app");
 
 beforeEach(() => seed({ categoryData, commentData, reviewData, userData }));
 afterAll(() => db.end());
@@ -18,9 +18,9 @@ describe("GET /api/categories", () => {
       .get("/api/categories")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         const { categories } = body;
         expect(categories).toBeInstanceOf(Array);
+        // add arr length check
         categories.forEach((obj) => {
           expect(obj).toBeInstanceOf(Object);
           expect(obj).toHaveProperty("slug");

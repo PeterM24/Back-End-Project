@@ -12,4 +12,4 @@ app.use("*", handleInvalidPath);
 
 app.use(unhandledErrors);
 
-module.exports = { app };
+module.exports = app;
