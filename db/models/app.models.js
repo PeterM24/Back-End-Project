@@ -11,7 +11,6 @@ exports.fetchAllCategories = () => {
 };
 
 exports.fetchReviewsById = (id) => {
-  console.log(id);
   return db
     .query(
       `

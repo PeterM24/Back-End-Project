@@ -60,5 +60,12 @@ describe("GET /api/reviews/:review_id", () => {
         expect(review).toHaveProperty('created_at')
       });
   });
-
+  test('404: should return an error message when passed an invalid id', () => {
+    return request(app)
+    .get('/api/reviews/900000')
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404: ID not found')
+    })
+  });
 });
