@@ -29,3 +29,14 @@ describe("GET /api/categories", () => {
       });
   });
 });
+
+describe("Handle invalid paths", () => {
+  test('404: should respond with an error "Path not found"', () => {
+    return request(app)
+      .get("/api/catgries") // any mispelled path
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: invalid path");
+      });
+  });
+});
