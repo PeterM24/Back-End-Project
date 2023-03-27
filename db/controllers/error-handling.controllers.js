@@ -1,4 +1,7 @@
 exports.handleInvalidPath = (req, res, next) => {
-    const err = { msg: "404: invalid path" };
-  res.status(404).send(err);
-}
+  res.status(404).send({ msg: "404: invalid path" });
+};
+
+exports.unhandledErrors = (err, req, res, next) => {
+  res.status(500).send({ msg: "Server Error" });
+};
