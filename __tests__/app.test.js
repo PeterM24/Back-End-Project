@@ -40,3 +40,25 @@ describe("Handle invalid paths", () => {
       });
   });
 });
+
+describe("GET /api/reviews/:review_id", () => {
+  test("200: should return a review object, with the appropriate keys", () => {
+    return request(app)
+      .get("/api/reviews/3")
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toBeInstanceOf(Object)
+        expect(review).toHaveProperty('review_id')
+        expect(review).toHaveProperty('title')
+        expect(review).toHaveProperty('review_body')
+        expect(review).toHaveProperty('designer')
+        expect(review).toHaveProperty('review_img_url')
+        expect(review).toHaveProperty('votes')
+        expect(review).toHaveProperty('category')
+        expect(review).toHaveProperty('owner')
+        expect(review).toHaveProperty('created_at')
+      });
+  });
+
+});

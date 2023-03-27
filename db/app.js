@@ -1,5 +1,5 @@
 const express = require("express");
-const { getCategories } = require("./controllers/app.controllers");
+const { getCategories, getReviews } = require("./controllers/app.controllers");
 const {
   handleInvalidPath,
   unhandledErrors,
@@ -7,6 +7,8 @@ const {
 const app = express();
 
 app.get("/api/categories", getCategories);
+
+app.get('/api/reviews/:review_id', getReviews)
 
 app.use("*", handleInvalidPath);
 

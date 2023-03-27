@@ -9,3 +9,16 @@ exports.fetchAllCategories = () => {
     )
     .then((res) => res.rows);
 };
+
+exports.fetchReviewsById = (id) => {
+  console.log(id);
+  return db
+    .query(
+      `
+  SELECT * FROM reviews
+  WHERE review_id = $1;
+  `,
+      [id]
+    )
+    .then((res) => res.rows);
+};
