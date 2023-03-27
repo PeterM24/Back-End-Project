@@ -19,5 +19,9 @@ exports.fetchReviewsById = (id) => {
   `,
       [id]
     )
-    .then((res) => res.rows);
+    .then((res) => {
+      if (res.rowCount === 0)
+        return Promise.reject({ status: 404, msg: "ID not found" });
+      return res.rows[0];
+    });
 };

@@ -36,7 +36,7 @@ describe("Handle invalid paths", () => {
       .get("/api/catgries") // any mispelled path
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("404: invalid path");
+        expect(body.msg).toBe("Invalid path");
       });
   });
 });
@@ -48,24 +48,32 @@ describe("GET /api/reviews/:review_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { review } = body;
-        expect(review).toBeInstanceOf(Object)
-        expect(review).toHaveProperty('review_id')
-        expect(review).toHaveProperty('title')
-        expect(review).toHaveProperty('review_body')
-        expect(review).toHaveProperty('designer')
-        expect(review).toHaveProperty('review_img_url')
-        expect(review).toHaveProperty('votes')
-        expect(review).toHaveProperty('category')
-        expect(review).toHaveProperty('owner')
-        expect(review).toHaveProperty('created_at')
+        expect(review).toBeInstanceOf(Object);
+        expect(review).toHaveProperty("review_id");
+        expect(review).toHaveProperty("title");
+        expect(review).toHaveProperty("review_body");
+        expect(review).toHaveProperty("designer");
+        expect(review).toHaveProperty("review_img_url");
+        expect(review).toHaveProperty("votes");
+        expect(review).toHaveProperty("category");
+        expect(review).toHaveProperty("owner");
+        expect(review).toHaveProperty("created_at");
       });
   });
-  test('404: should return an error message when passed an invalid id', () => {
+  test("404: should return an error message when passed an invalid id", () => {
     return request(app)
-    .get('/api/reviews/900000')
-    .expect(404)
-    .then(({body}) => {
-      expect(body.msg).toBe('404: ID not found')
-    })
+      .get("/api/reviews/900000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+  test("400: Bad request should send an error message when passed an invalid type (e.g. string letters)", () => {
+    return request(app)
+      .get("/api/reviews/not_a_number")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID, must be a number");
+      });
   });
 });

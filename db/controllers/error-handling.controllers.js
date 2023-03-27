@@ -1,10 +1,18 @@
 exports.handleInvalidPath = (req, res, next) => {
-  res.status(404).send({ msg: "404: invalid path" });
+  res.status(404).send({ msg: "Invalid path" });
 };
 
 exports.handleCustomErrors = (err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
+  } else {
+    next(err);
+  }
+};
+
+exports.handlePSQLErrors = (err, req, res, next) => {
+  if (err.code === "22P02") {
+    res.status(400).send({ msg: "Invalid ID, must be a number" });
   } else {
     next(err);
   }

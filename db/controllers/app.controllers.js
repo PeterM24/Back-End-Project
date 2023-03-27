@@ -10,14 +10,12 @@ exports.getCategories = (req, res, next) => {
 };
 
 exports.getReviews = (req, res, next) => {
-  if (req.params.review_id) {
-    fetchReviewsById(req.params.review_id)
-      .then((review) => {
-        if (!review[0]) return Promise.reject({ msg: "404: ID not found", status: 404 });
-        else res.status(200).send({ review: review[0] });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  }
+  const { review_id } = req.params;
+  fetchReviewsById(review_id)
+    .then((review) => {
+      res.status(200).send({ review });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
