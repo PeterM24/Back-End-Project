@@ -20,7 +20,7 @@ describe("GET /api/categories", () => {
       .then(({ body }) => {
         const { categories } = body;
         expect(categories).toBeInstanceOf(Array);
-        // add arr length check
+        expect(categories).toHaveLength(4)
         categories.forEach((obj) => {
           expect(obj).toBeInstanceOf(Object);
           expect(obj).toHaveProperty("slug");
