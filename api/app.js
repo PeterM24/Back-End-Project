@@ -1,17 +1,14 @@
 const express = require("express");
-const {
-  getCategories,
-  getReviewsById,
-  getAllReviews,
-  getComments,
-  postComment,
-} = require("./controllers/app.controllers");
+const { getCategories } = require("./controllers/categories.controllers");
+const { getComments, postComment } = require("./controllers/comments.controllers");
+postComment
 const {
   handleInvalidPath,
   unhandledErrors,
   handleCustomErrors,
   handlePSQLErrors,
 } = require("./controllers/error-handling.controllers");
+const { getReviewsById, getAllReviews } = require("./controllers/reviews.controllers");
 const app = express();
 
 app.use(express.json());

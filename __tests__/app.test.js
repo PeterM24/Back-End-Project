@@ -7,7 +7,7 @@ const {
 } = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
-const app = require("../db/app");
+const app = require("../api/app");
 
 beforeEach(() => seed({ categoryData, commentData, reviewData, userData }));
 afterAll(() => db.end());
@@ -195,7 +195,7 @@ describe("POST: /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("ID not found");
       });
   });
-  test('400: should return bad request if id is NaN', () => {
+  test("400: should return bad request if id is NaN", () => {
     return request(app)
       .post("/api/reviews/not_a_num/comments")
       .send(newComment)
@@ -204,22 +204,22 @@ describe("POST: /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("Invalid ID, must be a number");
       });
   });
-  test('400: should return bad request if posted object is incorrect format', () => {
+  test("400: should return bad request if posted object is incorrect format", () => {
     return request(app)
-    .post('/api/reviews/1/comments')
-    .send({username: "dav3rid", body: 3})
-    .expect(400)
-    .then(({ body }) => {
-      expect(body.msg).toBe("Invalid format");
-    });
+      .post("/api/reviews/1/comments")
+      .send({ username: "dav3rid", body: 3 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid format");
+      });
   });
-  test('400: should return bad request if posted object has incorrect keys', () => {
+  test("400: should return bad request if posted object has incorrect keys", () => {
     return request(app)
-    .post('/api/reviews/1/comments')
-    .send({dog: "dav3rid", cat: "Hello"})
-    .expect(400)
-    .then(({ body }) => {
-      expect(body.msg).toBe("Invalid format");
-    });
+      .post("/api/reviews/1/comments")
+      .send({ dog: "dav3rid", cat: "Hello" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid format");
+      });
   });
 });
