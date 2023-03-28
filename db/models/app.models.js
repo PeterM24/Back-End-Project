@@ -27,8 +27,37 @@ exports.fetchReviewsById = (id) => {
 };
 
 exports.fetchAllReviews = () => {
-  return db.query(`
+  return db
+    .query(
+      `
   SELECT reviews.title, reviews.owner, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id)::INT AS COMMENT_COUNT FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY reviews.created_at DESC;
-  `)
-  .then(res => res.rows)
-}
+  `
+    )
+    .then((res) => res.rows);
+};
+
+exports.fetchCommentsById = async (id) => {
+  const checkIDExists = await db.query(
+    `
+  SELECT * FROM reviews
+  WHERE review_id = $1;
+  `,
+    [id]
+  );
+
+  if (checkIDExists.rowCount === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: "ID not found",
+    });
+  }
+
+  const comments = await db.query(
+    `
+    SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC;
+    `,
+    [id]
+  );
+
+  return comments.rows;
+};
