@@ -1,6 +1,7 @@
 const {
   fetchAllCategories,
   fetchReviewsById,
+  fetchAllReviews,
 } = require("../models/app.models");
 
 exports.getCategories = (req, res, next) => {
@@ -19,3 +20,7 @@ exports.getReviewsById = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getAllReviews = (req, res, next) => {
+  fetchAllReviews().then(reviews => res.status(200).send({reviews})).catch(err => next(err))
+}
