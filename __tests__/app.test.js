@@ -144,4 +144,12 @@ describe('GET /api/reviews/:review_id/comments', () => {
           expect(body.msg).toBe('ID not found')
       })
   });
+  test('400: returns an error when a bad request is made', () => {
+    return request(app)
+    .get('/api/reviews/not_a_number/comments')
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Invalid ID, must be a number");
+    });
+  });
 });
