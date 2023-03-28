@@ -48,16 +48,18 @@ describe("GET /api/reviews/:review_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { review } = body;
-        expect(review).toBeInstanceOf(Object);
-        expect(review).toHaveProperty("review_id");
-        expect(review).toHaveProperty("title");
-        expect(review).toHaveProperty("review_body");
-        expect(review).toHaveProperty("designer");
-        expect(review).toHaveProperty("review_img_url");
-        expect(review).toHaveProperty("votes");
-        expect(review).toHaveProperty("category");
-        expect(review).toHaveProperty("owner");
-        expect(review).toHaveProperty("created_at");
+        expect(review).toMatchObject({
+          review_id: 3,
+          title: "Ultimate Werewolf",
+          designer: "Akihisa Okui",
+          owner: "bainesface",
+          review_img_url: "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          review_body: "We couldn't find the werewolf!",
+          category: "social deduction",
+          created_at: expect.any(String),
+          votes: 5
+        });
+        
       });
   });
   test("404: should return an error message when passed an invalid id", () => {
