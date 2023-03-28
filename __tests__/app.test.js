@@ -20,7 +20,7 @@ describe("GET /api/categories", () => {
       .then(({ body }) => {
         const { categories } = body;
         expect(categories).toBeInstanceOf(Array);
-        expect(categories).toHaveLength(4)
+        expect(categories).toHaveLength(4);
         categories.forEach((obj) => {
           expect(obj).toBeInstanceOf(Object);
           expect(obj).toHaveProperty("slug");
@@ -53,13 +53,13 @@ describe("GET /api/reviews/:review_id", () => {
           title: "Ultimate Werewolf",
           designer: "Akihisa Okui",
           owner: "bainesface",
-          review_img_url: "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          review_img_url:
+            "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
           review_body: "We couldn't find the werewolf!",
           category: "social deduction",
           created_at: expect.any(String),
-          votes: 5
+          votes: 5,
         });
-        
       });
   });
   test("404: should return an error message when passed an invalid id", () => {
@@ -76,6 +76,41 @@ describe("GET /api/reviews/:review_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid ID, must be a number");
+      });
+  });
+});
+
+describe("GET /api/reviews", () => {
+  test("200: returns with an array of review objects, with the correct properties", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        console.log(reviews)
+        expect(reviews).toHaveLength(13);
+        expect(reviews).toBeSortedBy("created_at", { descending: true });
+        reviews.forEach((review) => {
+          expect(review).toMatchObject({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("404: returns with an error message when given an invalid path", () => {
+    return request(app)
+      .get("/api/review") // any mispelled path
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid path");
       });
   });
 });
