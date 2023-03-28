@@ -3,6 +3,7 @@ const {
   fetchReviewsById,
   fetchAllReviews,
   fetchCommentsById,
+  addComment,
 } = require("../models/app.models");
 
 exports.getCategories = (req, res, next) => {
@@ -33,4 +34,12 @@ exports.getComments = (req, res, next) => {
   fetchCommentsById(review_id)
     .then((comments) => res.status(200).send({ comments }))
     .catch((err) => next(err));
+};
+
+exports.postComment = (req, res, next) => {
+  addComment(req.params, req.body)
+    .then((comment) => res.status(201).send({ comment }))
+    .catch((err) => {
+      console.log(err)
+      next(err)});
 };
