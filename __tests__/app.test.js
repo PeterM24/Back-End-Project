@@ -87,7 +87,6 @@ describe("GET /api/reviews", () => {
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
-        console.log(reviews)
         expect(reviews).toHaveLength(13);
         expect(reviews).toBeSortedBy("created_at", { descending: true });
         reviews.forEach((review) => {
@@ -111,6 +110,56 @@ describe("GET /api/reviews", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid path");
+      });
+  });
+});
+
+describe("GET /api/reviews/:review_id/comments", () => {
+  test("200: returns an array of comments for the given review_id", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(3);
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: 3,
+          });
+        });
+      });
+  });
+  test("200: should return an empty array if review has no comments", () => {
+    return request(app)
+      .get("/api/reviews/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(0);
+      });
+  });
+  test("404: returns an error if id is not found", () => {
+    return request(app)
+      .get("/api/reviews/5000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+  test("400: returns an error when a bad request is made", () => {
+    return request(app)
+      .get("/api/reviews/not_a_number/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID, must be a number");
       });
   });
 });
