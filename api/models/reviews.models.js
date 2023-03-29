@@ -29,7 +29,9 @@ exports.fetchAllReviews = () => {
 exports.setReviewVotes = async (body, params) => {
   const { inc_votes } = body;
   const { review_id } = params;
-  
+  if (isNaN(inc_votes) || isNaN(review_id)) {
+    return Promise.reject({ status: 400, msg: "Invalid format" });
+  }
   const review = await db.query(
     `
     UPDATE reviews
@@ -39,6 +41,6 @@ exports.setReviewVotes = async (body, params) => {
     `,
     [inc_votes, review_id]
   );
-  
+
   return review.rows[0];
 };
