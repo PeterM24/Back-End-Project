@@ -1,4 +1,5 @@
 const db = require("../../db/connection");
+const { checkValueExists } = require("../utils");
 
 exports.fetchReviewsById = (id) => {
   return db
@@ -33,20 +34,8 @@ exports.setReviewVotes = async (body, params) => {
     return Promise.reject({ status: 400, msg: "Invalid format" });
   }
 
-  const checkIDExists = await db.query(
-    `
-    SELECT * FROM reviews
-    WHERE review_id = $1;
-    `,
-    [review_id]
-  );
-
-  if (checkIDExists.rowCount === 0) {
-    return Promise.reject({
-      status: 404,
-      msg: "ID not found",
-    });
-  }
+  const checkId = await checkValueExists("reviews", "review_id", review_id);
+  if (!checkId) return Promise.reject({ status: 404, msg: "ID not found" });
 
   const review = await db.query(
     `
@@ -60,14 +49,3 @@ exports.setReviewVotes = async (body, params) => {
 
   return review.rows[0];
 };
-
-exports.checkValueExists = async (table, property, value) => {
-  const checkExists = await db.query(
-    `
-    SELECT * FROM ${table}
-    WHERE ${property} = $1;
-    `,
-    [value]
-  );
-  return checkExists.rowCount > 0;
-}
