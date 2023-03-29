@@ -8,6 +8,7 @@ const {
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
 const app = require("../api/app");
+const { valueExists, checkValueExists } = require("../api/models/reviews.models");
 
 beforeEach(() => seed({ categoryData, commentData, reviewData, userData }));
 afterAll(() => db.end());
@@ -398,4 +399,20 @@ describe('PATCH /api/reviews/:review_id', () => {
         expect(msg).toBe("ID not found")
       });
   });
+});
+
+describe('checkValueExists util function', () => {
+
+  test('returns true if value exists', () => {
+    return checkValueExists('reviews', 'review_id', 3).then(res => {
+      expect(res).toBe(true);
+    })
+  });
+
+  test('returns false if value does not exists ', () => {
+    return checkValueExists('users', 'username', 'hello').then(res => {
+      expect(res).toBe(false);
+    })
+  });
+
 });

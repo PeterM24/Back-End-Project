@@ -60,3 +60,14 @@ exports.setReviewVotes = async (body, params) => {
 
   return review.rows[0];
 };
+
+exports.checkValueExists = async (table, property, value) => {
+  const checkExists = await db.query(
+    `
+    SELECT * FROM ${table}
+    WHERE ${property} = $1;
+    `,
+    [value]
+  );
+  return checkExists.rowCount > 0;
+}
