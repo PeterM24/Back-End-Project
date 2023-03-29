@@ -1,14 +1,4 @@
-const db = require("../connection");
-
-exports.fetchAllCategories = () => {
-  return db
-    .query(
-      `
-    SELECT * FROM categories;
-    `
-    )
-    .then((res) => res.rows);
-};
+const db = require("../../db/connection");
 
 exports.fetchReviewsById = (id) => {
   return db
@@ -34,30 +24,4 @@ exports.fetchAllReviews = () => {
   `
     )
     .then((res) => res.rows);
-};
-
-exports.fetchCommentsById = async (id) => {
-  const checkIDExists = await db.query(
-    `
-  SELECT * FROM reviews
-  WHERE review_id = $1;
-  `,
-    [id]
-  );
-
-  if (checkIDExists.rowCount === 0) {
-    return Promise.reject({
-      status: 404,
-      msg: "ID not found",
-    });
-  }
-
-  const comments = await db.query(
-    `
-    SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC;
-    `,
-    [id]
-  );
-
-  return comments.rows;
 };

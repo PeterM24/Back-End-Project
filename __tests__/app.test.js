@@ -7,7 +7,7 @@ const {
 } = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
-const app = require("../db/app");
+const app = require("../api/app");
 
 beforeEach(() => seed({ categoryData, commentData, reviewData, userData }));
 afterAll(() => db.end());
@@ -160,6 +160,101 @@ describe("GET /api/reviews/:review_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid ID, must be a number");
+      });
+  });
+});
+
+describe("POST: /api/reviews/:review_id/comments", () => {
+  const newComment = {
+    username: "dav3rid",
+    body: "Hello world!",
+  };
+  const invalidUser = {
+    username: "peewee",
+    body: "Hello world!",
+  };
+  test("201: returns the posted comment as an object", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: "dav3rid",
+          body: "Hello world!",
+          review_id: 1,
+        });
+      });
+  });
+  test("201: ignores unnecessary properties passed in post request", () => {
+    const commentWithUnnecessaryProps = {
+      username: "dav3rid",
+      body: "Hello world!",
+      unnecessary: "notNeeded"
+    }
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(commentWithUnnecessaryProps)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: "dav3rid",
+          body: "Hello world!",
+          review_id: 1,
+        });
+      });
+  });
+  test("404: should return an invalid id error", () => {
+    return request(app)
+      .post("/api/reviews/10000/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+  test('404: Username does not exist - returns an error', () => {
+    return request(app)
+    .post("/api/reviews/1/comments")
+    .send(invalidUser)
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Username 'peewee' does not exist");
+    });
+  });
+  test("400: should return bad request if id is NaN", () => {
+    return request(app)
+      .post("/api/reviews/not_a_num/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID, must be a number");
+      });
+  });
+  test("400: should return bad request if posted object is incorrect format", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({ username: "dav3rid", body: 3 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid format");
+      });
+  });
+  test("400: should return bad request if posted object has incorrect keys", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({ dog: "dav3rid", cat: "Hello" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid format");
       });
   });
 });
