@@ -8,6 +8,7 @@ const {
 const seed = require("../db/seeds/seed");
 const db = require("../db/connection");
 const app = require("../api/app");
+const { checkValueExists } = require("../api/utils");
 
 beforeEach(() => seed({ categoryData, commentData, reviewData, userData }));
 afterAll(() => db.end());
@@ -194,8 +195,8 @@ describe("POST: /api/reviews/:review_id/comments", () => {
     const commentWithUnnecessaryProps = {
       username: "dav3rid",
       body: "Hello world!",
-      unnecessary: "notNeeded"
-    }
+      unnecessary: "notNeeded",
+    };
     return request(app)
       .post("/api/reviews/1/comments")
       .send(commentWithUnnecessaryProps)
@@ -221,14 +222,14 @@ describe("POST: /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("ID not found");
       });
   });
-  test('404: Username does not exist - returns an error', () => {
+  test("404: Username does not exist - returns an error", () => {
     return request(app)
-    .post("/api/reviews/1/comments")
-    .send(invalidUser)
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).toBe("Username 'peewee' does not exist");
-    });
+      .post("/api/reviews/1/comments")
+      .send(invalidUser)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Username 'peewee' does not exist");
+      });
   });
   test("400: should return bad request if id is NaN", () => {
     return request(app)
@@ -256,5 +257,160 @@ describe("POST: /api/reviews/:review_id/comments", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid format");
       });
+  });
+});
+
+describe("PATCH /api/reviews/:review_id", () => {
+  const increment = { inc_votes: 10 };
+  const decrement = { inc_votes: -4 };
+  const incorrectInputWithStr = { inc_votes: "Hello" };
+  const zero = { inc_votes: 0 };
+  const incorrectInput = { hello: "there" };
+  const unnecessaryKeys = { inc_votes: 10, unnecessary: "notNeeded" };
+
+  test("200: should return the updated review with incremented vote count", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send(increment)
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toMatchObject({
+          review_id: 3,
+          title: "Ultimate Werewolf",
+          designer: "Akihisa Okui",
+          owner: "bainesface",
+          review_img_url:
+            "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          review_body: "We couldn't find the werewolf!",
+          category: "social deduction",
+          created_at: expect.any(String),
+          votes: 15, //increased from 5 to 15
+        });
+      });
+  });
+
+  test("200: should return the updated review with decremented vote count", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send(decrement)
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toMatchObject({
+          review_id: 3,
+          title: "Ultimate Werewolf",
+          designer: "Akihisa Okui",
+          owner: "bainesface",
+          review_img_url:
+            "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          review_body: "We couldn't find the werewolf!",
+          category: "social deduction",
+          created_at: expect.any(String),
+          votes: 1, //decreased from 5 to 1
+        });
+      });
+  });
+
+  test("200: returns original review, given an inc_vote of 0", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send(zero)
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toMatchObject({
+          review_id: 3,
+          title: "Ultimate Werewolf",
+          designer: "Akihisa Okui",
+          owner: "bainesface",
+          review_img_url:
+            "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          review_body: "We couldn't find the werewolf!",
+          category: "social deduction",
+          created_at: expect.any(String),
+          votes: 5, //stays 0
+        });
+      });
+  });
+
+  test("400: returns bad request error, given invalid data type", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(incorrectInputWithStr)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Invalid format");
+      });
+  });
+
+  test("400: returns bad request error, given invalid data id type", () => {
+    return request(app)
+      .patch("/api/reviews/not_a_number")
+      .send(incorrectInputWithStr)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Invalid format");
+      });
+  });
+
+  test("200: ignores unnecessary properties within req object", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send(unnecessaryKeys)
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toMatchObject({
+          review_id: 3,
+          title: "Ultimate Werewolf",
+          designer: "Akihisa Okui",
+          owner: "bainesface",
+          review_img_url:
+            "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          review_body: "We couldn't find the werewolf!",
+          category: "social deduction",
+          created_at: expect.any(String),
+          votes: 15,
+        });
+      });
+  });
+
+  test("400: returns error if not passed required keys", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(incorrectInput)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Invalid format");
+      });
+  });
+
+  test("404: returns error if ID does not exist", () => {
+    return request(app)
+      .patch("/api/reviews/1000")
+      .send(increment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("ID not found");
+      });
+  });
+});
+
+describe("checkValueExists util function", () => {
+  test("returns true if value exists", () => {
+    return checkValueExists("reviews", "review_id", 3).then((res) => {
+      expect(res).toBe(true);
+    });
+  });
+
+  test("returns false if value does not exists ", () => {
+    return checkValueExists("users", "username", "hello").then((res) => {
+      expect(res).toBe(false);
+    });
   });
 });

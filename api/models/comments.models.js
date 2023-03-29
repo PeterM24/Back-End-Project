@@ -1,4 +1,5 @@
 const db = require("../../db/connection");
+const { checkValueExists } = require("../utils");
 
 exports.fetchCommentsById = async (id) => {
   const checkIDExists = await db.query(
@@ -32,35 +33,16 @@ exports.addComment = async (id, commentValues) => {
   if (typeof username !== "string" || typeof body !== "string") {
     return Promise.reject({ status: 400, msg: "Invalid format" });
   }
-  const checkIDExists = await db.query(
-    `
-    SELECT * FROM reviews
-    WHERE review_id = $1;
-    `,
-    [review_id]
-  );
 
-  if (checkIDExists.rowCount === 0) {
+  const checkId = await checkValueExists("reviews", "review_id", review_id);
+  if (!checkId) return Promise.reject({ status: 404, msg: "ID not found" });
+
+  const checkUser = await checkValueExists("users", "username", username);
+  if (!checkUser)
     return Promise.reject({
       status: 404,
-      msg: "ID not found",
+      msg: `Username '${username}' does not exist`,
     });
-  }
-
-  const userExists = await db.query(
-    `
-    SELECT * FROM users
-    WHERE username = $1;
-    `,
-    [username]
-  )
-
-  if (userExists.rowCount === 0) {
-    return Promise.reject({
-      status:404,
-      msg:`Username '${username}' does not exist`
-    })
-  }
 
   const comment = await db.query(
     `
