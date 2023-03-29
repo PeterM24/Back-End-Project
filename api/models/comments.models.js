@@ -47,6 +47,21 @@ exports.addComment = async (id, commentValues) => {
     });
   }
 
+  const userExists = await db.query(
+    `
+    SELECT * FROM users
+    WHERE username = $1;
+    `,
+    [username]
+  )
+
+  if (userExists.rowCount === 0) {
+    return Promise.reject({
+      status:404,
+      msg:`Username '${username}' does not exist`
+    })
+  }
+
   const comment = await db.query(
     `
   INSERT INTO comments

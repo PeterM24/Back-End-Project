@@ -169,10 +169,36 @@ describe("POST: /api/reviews/:review_id/comments", () => {
     username: "dav3rid",
     body: "Hello world!",
   };
+  const invalidUser = {
+    username: "peewee",
+    body: "Hello world!",
+  };
   test("201: returns the posted comment as an object", () => {
     return request(app)
       .post("/api/reviews/1/comments")
       .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: "dav3rid",
+          body: "Hello world!",
+          review_id: 1,
+        });
+      });
+  });
+  test("201: ignores unnecessary properties passed in post request", () => {
+    const commentWithUnnecessaryProps = {
+      username: "dav3rid",
+      body: "Hello world!",
+      unnecessary: "notNeeded"
+    }
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(commentWithUnnecessaryProps)
       .expect(201)
       .then(({ body }) => {
         const { comment } = body;
@@ -194,6 +220,15 @@ describe("POST: /api/reviews/:review_id/comments", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("ID not found");
       });
+  });
+  test('404: Username does not exist - returns an error', () => {
+    return request(app)
+    .post("/api/reviews/1/comments")
+    .send(invalidUser)
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Username 'peewee' does not exist");
+    });
   });
   test("400: should return bad request if id is NaN", () => {
     return request(app)
