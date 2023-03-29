@@ -25,3 +25,19 @@ exports.fetchAllReviews = () => {
     )
     .then((res) => res.rows);
 };
+
+exports.setReview = async (body, params) => {
+  const { inc_votes } = body;
+  const { review_id } = params;
+  const review = await db.query(
+    `
+    UPDATE reviews
+    SET votes = votes + $1
+    WHERE review_id = $2
+    RETURNING *;
+    `,
+    [inc_votes, review_id]
+  );
+
+  return review.rows[0];
+};
