@@ -387,4 +387,15 @@ describe('PATCH /api/reviews/:review_id', () => {
         expect(msg).toBe("Invalid format")
       });
   });
+
+  test('404: returns error if ID does not exist', () => {
+    return request(app)
+      .patch('/api/reviews/1000')
+      .send(increment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("ID not found")
+      });
+  });
 });

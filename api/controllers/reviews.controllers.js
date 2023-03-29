@@ -24,5 +24,7 @@ exports.getAllReviews = (req, res, next) => {
 exports.patchReview = (req, res, next) => {
   setReviewVotes(req.body, req.params)
     .then((review) => res.status(200).send({ review }))
-    .catch((err) => next(err));
+    .catch((err) => {
+      console.log(err)
+      next(err)});
 };

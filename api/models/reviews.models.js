@@ -32,6 +32,22 @@ exports.setReviewVotes = async (body, params) => {
   if (isNaN(inc_votes) || isNaN(review_id)) {
     return Promise.reject({ status: 400, msg: "Invalid format" });
   }
+
+  const checkIDExists = await db.query(
+    `
+    SELECT * FROM reviews
+    WHERE review_id = $1;
+    `,
+    [review_id]
+  );
+
+  if (checkIDExists.rowCount === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: "ID not found",
+    });
+  }
+
   const review = await db.query(
     `
     UPDATE reviews
