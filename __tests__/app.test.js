@@ -260,14 +260,15 @@ describe("POST: /api/reviews/:review_id/comments", () => {
 });
 
 describe('PATCH /api/reviews/:review_id', () => {
-  const correctInput = { inc_votes: 10 };
+  const increment = { inc_votes: 10 };
+  const decrement = { inc_votes: -4 };
   const incorrectInputWithStr = { inc_votes: 'Hello' };
   const incorrectInput = { hello: 'there' };
 
-  test('200: should return the updated review with amended vote count', () => {
+  test('200: should return the updated review with incremented vote count', () => {
     return request(app)
       .patch('/api/reviews/3')
-      .send(correctInput)
+      .send(increment)
       .expect(200)
       .then(({ body }) => {
         const { review } = body;
@@ -281,8 +282,31 @@ describe('PATCH /api/reviews/:review_id', () => {
           review_body: "We couldn't find the werewolf!",
           category: 'social deduction',
           created_at: expect.any(String),
-          votes: 15 //increased from 5 to 10
+          votes: 15 //increased from 5 to 15
         });
       });
   });
+
+  test('200: should return the updated review with decremented vote count', () => {
+    return request(app)
+      .patch('/api/reviews/3')
+      .send(decrement)
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toMatchObject({
+          review_id: 3,
+          title: 'Ultimate Werewolf',
+          designer: 'Akihisa Okui',
+          owner: 'bainesface',
+          review_img_url:
+            'https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700',
+          review_body: "We couldn't find the werewolf!",
+          category: 'social deduction',
+          created_at: expect.any(String),
+          votes: 1 //increased from 5 to 10
+        });
+      });
+  });
+
 });

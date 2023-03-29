@@ -1,7 +1,7 @@
 const {
   fetchReviewsById,
   fetchAllReviews,
-  setReview,
+  setReviewVotes,
 } = require("../models/reviews.models");
 
 exports.getReviewsById = (req, res, next) => {
@@ -22,7 +22,7 @@ exports.getAllReviews = (req, res, next) => {
 };
 
 exports.patchReview = (req, res, next) => {
-  setReview(req.body, req.params)
+  setReviewVotes(req.body, req.params)
     .then((review) => res.status(200).send({ review }))
     .catch((err) => next(err));
 };
