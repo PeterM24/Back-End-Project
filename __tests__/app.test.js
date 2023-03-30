@@ -419,10 +419,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   test("204: deletes comment and responds with no content", () => {
     return request(app)
       .delete("/api/comments/1")
-      .expect(204)
-      .then(({ body }) => {
-        expect(body).toEqual({});
-      });
+      .expect(204);
   });
   test("404: comment not found", () => {
     return request(app)

@@ -21,6 +21,6 @@ exports.postComment = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
   deleteCommentById(req.params)
-    .then(() => res.status(204).send({}))
+    .then(() => res.status(204).end())
     .catch((err) => next(err));
 };
