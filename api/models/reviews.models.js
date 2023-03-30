@@ -17,14 +17,47 @@ exports.fetchReviewsById = (id) => {
     });
 };
 
-exports.fetchAllReviews = () => {
-  return db
-    .query(
-      `
-  SELECT reviews.title, reviews.owner, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id)::INT AS COMMENT_COUNT FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY reviews.created_at DESC;
-  `
-    )
-    .then((res) => res.rows);
+exports.fetchAllReviews = async (
+  order = "DESC",
+  sort_by = "created_at",
+  category
+) => {
+  const validSortBy = ['title', 'owner', 'category', 'created_at', 'votes', 'designer' ]
+  const validOrder = ['ASC', 'DESC']
+
+  if (!validSortBy.includes(sort_by.toLowerCase())) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid sort_by"
+    })
+  }
+
+  if (!validOrder.includes(order.toUpperCase())) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid order: use DESC or ASC"
+    })
+  }
+  if (category) {
+    const categoryExists = await checkValueExists('categories', 'slug', category.split("-").join(" "))
+    if (!categoryExists) return Promise.reject({status: 404, msg: "Category not found"})
+  }
+ 
+  let queryStr = `
+  SELECT reviews.*, COUNT(comments.review_id)::INT AS COMMENT_COUNT
+  FROM reviews
+  LEFT JOIN comments
+  ON comments.review_id = reviews.review_id `;
+
+  category
+    ? (queryStr += `WHERE category = '${category.split("-").join(" ")}'
+    GROUP BY reviews.review_id
+    ORDER BY reviews.${sort_by} ${order};`)
+    : (queryStr += `GROUP BY reviews.review_id
+    ORDER BY reviews.${sort_by} ${order};`);
+
+  const reviews = await db.query(queryStr);
+  return reviews.rows;
 };
 
 exports.setReviewVotes = async (body, params) => {
