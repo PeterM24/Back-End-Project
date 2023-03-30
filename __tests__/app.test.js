@@ -432,4 +432,12 @@ describe('DELETE /api/comments/:comment_id', () => {
       expect(body.msg).toEqual("Comment ID not found")
     })
   });
+  test('400: Bad request - PSQL error handling when passed NaN', () => {
+    return request(app)
+    .delete('/api/comments/not_a_number')
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toEqual("Invalid ID, must be a number")
+    })
+  });
 });
