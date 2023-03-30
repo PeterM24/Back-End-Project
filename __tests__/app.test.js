@@ -574,7 +574,7 @@ describe('GET /api/reviews?query=x', () => {
       expect(reviews).toBeSortedBy("created_at", { descending: true });
     });
   });
-  test('400: Bad request should return an error if sort_by column does not exist', () => {
+  test('404: Bad request should return an error if sort_by column does not exist', () => {
     return request(app)
     .get("/api/reviews?sort_by=unknown")
     .expect(404)
@@ -586,7 +586,7 @@ describe('GET /api/reviews?query=x', () => {
   test('400: Bad request returns an error if passed invalid order query: string', () => {
     return request(app)
     .get("/api/reviews?order=unknown")
-    .expect(404)
+    .expect(400)
     .then(({ body }) => {
       const { msg } = body;
       expect(msg).toBe("Invalid query");
@@ -595,7 +595,7 @@ describe('GET /api/reviews?query=x', () => {
   test('400: Bad request returns an error if passed invalid order query: num', () => {
     return request(app)
     .get("/api/reviews?order=1")
-    .expect(404)
+    .expect(400)
     .then(({ body }) => {
       const { msg } = body;
       expect(msg).toBe("Invalid query");
