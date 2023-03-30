@@ -534,4 +534,25 @@ describe('GET /api/reviews?query=x', () => {
       })
     })
   });
+  test('200: sort by votes column', () => {
+    return request(app)
+    .get("/api/reviews?sort_by=votes")
+    .expect(200)
+    .then(({ body }) => {
+      const { reviews } = body;
+      expect(reviews).toHaveLength(13);
+      expect(reviews).toBeSortedBy("votes", { descending: true });
+    });
+  });
+  test('200: sort by title column', () => {
+    return request(app)
+    .get("/api/reviews?sort_by=title")
+    .expect(200)
+    .then(({ body }) => {
+      const { reviews } = body;
+      expect(reviews).toHaveLength(13);
+      expect(reviews).toBeSortedBy("title", { descending: true });
+    });
+  });
+  
 });
