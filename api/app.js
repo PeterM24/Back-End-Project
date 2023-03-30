@@ -9,6 +9,7 @@ const {
   handlePSQLErrors,
 } = require("./controllers/error-handling.controllers");
 const { getReviewsById, getAllReviews, patchReview } = require("./controllers/reviews.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 const app = express();
 
 app.use(express.json());
@@ -17,6 +18,7 @@ app.get("/api/categories", getCategories);
 app.get("/api/reviews/:review_id", getReviewsById);
 app.get("/api/reviews", getAllReviews);
 app.get("/api/reviews/:review_id/comments", getComments);
+app.get('/api/users', getUsers)
 app.post("/api/reviews/:review_id/comments", postComment);
 app.patch('/api/reviews/:review_id', patchReview);
 app.delete('/api/comments/:comment_id', deleteComment)

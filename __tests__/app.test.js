@@ -448,3 +448,40 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe('GET /api/users', () => {
+  test("200: should return an array of user objects with the correct properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((obj) => {
+          expect(obj).toBeInstanceOf(Object);
+          expect(obj).toHaveProperty("username");
+          expect(obj).toHaveProperty("name");
+          expect(obj).toHaveProperty("avatar_url");
+        });
+      });
+  });
+  test('200: each user in users array should match object shape', () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((obj) => {
+          expect(obj).toBeInstanceOf(Object);
+          expect(obj).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String)
+          })
+        });
+      });
+  });
+});
