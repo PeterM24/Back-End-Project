@@ -22,6 +22,23 @@ exports.fetchAllReviews = async (
   sort_by = "created_at",
   category
 ) => {
+  const validSortBy = ['title', 'owner', 'category', 'created_at', 'votes', 'designer' ]
+  const validOrder = ['ASC', 'DESC']
+
+  if (!validSortBy.includes(sort_by.toLowerCase())) {
+    return Promise.reject({
+      status: "400",
+      msg: "Invalid sort_by"
+    })
+  }
+
+  if (!validOrder.includes(order.toUpperCase())) {
+    return Promise.reject({
+      status: "400",
+      msg: "Invalid order: use DESC or ASC"
+    })
+  }
+
   let queryStr = `
   SELECT reviews.*, COUNT(comments.review_id)::INT AS COMMENT_COUNT
   FROM reviews
