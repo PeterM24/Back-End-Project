@@ -554,5 +554,24 @@ describe('GET /api/reviews?query=x', () => {
       expect(reviews).toBeSortedBy("title", { descending: true });
     });
   });
-  
+  test('200: order by asc', () => {
+    return request(app)
+    .get("/api/reviews?order=asc")
+    .expect(200)
+    .then(({ body }) => {
+      const { reviews } = body;
+      expect(reviews).toHaveLength(13);
+      expect(reviews).toBeSortedBy("created_at", { ascending: true });
+    });
+  });
+  test('200: order by desc', () => {
+    return request(app)
+    .get("/api/reviews?order=desc")
+    .expect(200)
+    .then(({ body }) => {
+      const { reviews } = body;
+      expect(reviews).toHaveLength(13);
+      expect(reviews).toBeSortedBy("created_at", { descending: true });
+    });
+  });
 });
