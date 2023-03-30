@@ -18,7 +18,10 @@ exports.handlePSQLErrors = (err, req, res, next) => {
     res.status(400).send({ msg: "Invalid format" });
   } 
   if (err.code === '42703') {
-    res.status(400).send({ msg: "Column not found" });
+    res.status(404).send({ msg: "Column not found" });
+  }
+  if (err.code === '42601') {
+    res.status(404).send({ msg: "Invalid query" });
   }
   else {
     next(err);
