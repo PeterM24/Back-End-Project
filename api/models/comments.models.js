@@ -56,3 +56,15 @@ exports.addComment = async (id, commentValues) => {
 
   return comment.rows[0];
 };
+
+exports.deleteCommentById = async (id) => {
+const {comment_id} = id;
+
+const commentDeleted = await db.query(`
+DELETE FROM comments
+WHERE comment_id = $1
+RETURNING *;
+`, [comment_id])
+
+if (commentDeleted.rowCount === 1) return {};
+}
