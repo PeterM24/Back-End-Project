@@ -27,18 +27,22 @@ exports.fetchAllReviews = async (
 
   if (!validSortBy.includes(sort_by.toLowerCase())) {
     return Promise.reject({
-      status: "400",
+      status: 400,
       msg: "Invalid sort_by"
     })
   }
 
   if (!validOrder.includes(order.toUpperCase())) {
     return Promise.reject({
-      status: "400",
+      status: 400,
       msg: "Invalid order: use DESC or ASC"
     })
   }
-
+  if (category) {
+    const categoryExists = await checkValueExists('categories', 'slug', category.split("-").join(" "))
+    if (!categoryExists) return Promise.reject({status: 404, msg: "Category not found"})
+  }
+ 
   let queryStr = `
   SELECT reviews.*, COUNT(comments.review_id)::INT AS COMMENT_COUNT
   FROM reviews
@@ -78,21 +82,3 @@ exports.setReviewVotes = async (body, params) => {
 
   return review.rows[0];
 };
-
-// exports.fetchReviewsByQuery = async (query) => {
-//   const queryStr = `SELECT * FROM reviews `
-//   const
-
-//   if (query.hasOwnProperty('category')) {
-//     queryStr += `WHERE category = $1`
-//   }
-
-//   query.hasOwnProperty('sort_by') ?
-//     queryStr += `ORDER BY $1`
-//   : queryStr += `ORDER BY created_at`
-
-//   query.hasOwnProperty('order') ?
-//     queryStr += `ORDER BY $1` : queryStr += `ORDER BY DESC`
-
-//     const reviews = await db.query(queryStr, query)
-// }

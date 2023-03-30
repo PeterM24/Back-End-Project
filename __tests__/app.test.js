@@ -601,4 +601,13 @@ describe('GET /api/reviews?query=x', () => {
       expect(msg).toBe("Invalid order: use DESC or ASC");
     });
   });
+  test('404: category not found', () => {
+    return request(app)
+    .get("/api/reviews?category=hello")
+    .expect(404)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Category not found");
+    });
+  });
 });
