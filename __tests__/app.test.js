@@ -488,3 +488,50 @@ describe('GET /api/users', () => {
       });
   });
 });
+
+describe('GET /api/reviews?query=x', () => {
+  test('200: gets reviews by category=social-deduction', () => {
+    return request(app)
+    .get('/api/reviews?category=social-deduction')
+    .expect(200)
+    .then(({body}) => {
+      expect(body.reviews).toBeInstanceOf(Array)
+      expect(body.reviews).toHaveLength(11)
+      body.reviews.forEach(review => {
+        expect(review).toMatchObject({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: "social deduction",
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(Number),
+        })
+      })
+    })
+  });
+  test('200: gets reviews by category=dexterity', () => {
+    return request(app)
+    .get('/api/reviews?category=dexterity')
+    .expect(200)
+    .then(({body}) => {
+      expect(body.reviews).toBeInstanceOf(Array)
+      expect(body.reviews).toHaveLength(1)
+      body.reviews.forEach(review => {
+        expect(review).toMatchObject({
+          owner: expect.any(String),
+          title: expect.any(String),
+          review_id: expect.any(Number),
+          category: "dexterity",
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          designer: expect.any(String),
+          comment_count: expect.any(Number),
+        })
+      })
+    })
+  });
+});

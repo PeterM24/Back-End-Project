@@ -17,14 +17,26 @@ exports.fetchReviewsById = (id) => {
     });
 };
 
-exports.fetchAllReviews = () => {
-  return db
-    .query(
-      `
-  SELECT reviews.title, reviews.owner, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id)::INT AS COMMENT_COUNT FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY reviews.created_at DESC;
-  `
-    )
-    .then((res) => res.rows);
+exports.fetchAllReviews = async (
+  order = "DESC",
+  sort_by = "created_at",
+  category
+) => {
+  let queryStr = `
+  SELECT reviews.*, COUNT(comments.review_id)::INT AS COMMENT_COUNT
+  FROM reviews
+  LEFT JOIN comments
+  ON comments.review_id = reviews.review_id `;
+
+  category
+    ? (queryStr += `WHERE category = '${category.split("-").join(" ")}'
+    GROUP BY reviews.review_id
+    ORDER BY reviews.${sort_by} ${order};`)
+    : (queryStr += `GROUP BY reviews.review_id
+    ORDER BY reviews.${sort_by} ${order};`);
+
+  const reviews = await db.query(queryStr);
+  return reviews.rows;
 };
 
 exports.setReviewVotes = async (body, params) => {
@@ -49,3 +61,21 @@ exports.setReviewVotes = async (body, params) => {
 
   return review.rows[0];
 };
+
+// exports.fetchReviewsByQuery = async (query) => {
+//   const queryStr = `SELECT * FROM reviews `
+//   const
+
+//   if (query.hasOwnProperty('category')) {
+//     queryStr += `WHERE category = $1`
+//   }
+
+//   query.hasOwnProperty('sort_by') ?
+//     queryStr += `ORDER BY $1`
+//   : queryStr += `ORDER BY created_at`
+
+//   query.hasOwnProperty('order') ?
+//     queryStr += `ORDER BY $1` : queryStr += `ORDER BY DESC`
+
+//     const reviews = await db.query(queryStr, query)
+// }
