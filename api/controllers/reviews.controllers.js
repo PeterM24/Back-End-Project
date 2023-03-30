@@ -20,7 +20,9 @@ exports.getReviews = (req, res, next) => {
   const { order, sort_by, category } = req.query
   fetchAllReviews(order, sort_by, category)
     .then((reviews) => res.status(200).send({ reviews }))
-    .catch((err) => next(err));
+    .catch((err) => {
+      console.log(err);
+      next(err)});
 };
 
 exports.patchReview = (req, res, next) => {

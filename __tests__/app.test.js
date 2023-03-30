@@ -574,4 +574,14 @@ describe('GET /api/reviews?query=x', () => {
       expect(reviews).toBeSortedBy("created_at", { descending: true });
     });
   });
+  test('400: Bad request should return an error if sort_by colum does not exist', () => {
+    return request(app)
+    .get("/api/reviews?sort_by=unknown")
+    .expect(400)
+    .then(({ body }) => {
+      console.log(body.msg)
+      const { msg } = body;
+      expect(msg).toBe("Column not found");
+    });
+  });
 });
