@@ -424,4 +424,12 @@ describe('DELETE /api/comments/:comment_id', () => {
       expect(body).toEqual({})
     })
   });
+  test('404: comment not found', () => {
+    return request(app)
+    .delete('/api/comments/1000')
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toEqual("Comment ID not found")
+    })
+  });
 });
