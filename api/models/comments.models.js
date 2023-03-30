@@ -56,3 +56,18 @@ exports.addComment = async (id, commentValues) => {
 
   return comment.rows[0];
 };
+
+exports.deleteCommentById = async (id) => {
+const {comment_id} = id;
+
+const checkId = await checkValueExists("comments", "comment_id", comment_id);
+if (!checkId) return Promise.reject({ status: 404, msg: "Comment ID not found" });
+
+const commentDeleted = await db.query(`
+DELETE FROM comments
+WHERE comment_id = $1
+RETURNING *;
+`, [comment_id])
+
+if (commentDeleted.rowCount === 1) return {};
+}

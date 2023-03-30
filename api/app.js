@@ -1,6 +1,6 @@
 const express = require("express");
 const { getCategories } = require("./controllers/categories.controllers");
-const { getComments, postComment } = require("./controllers/comments.controllers");
+const { getComments, postComment, deleteComment } = require("./controllers/comments.controllers");
 postComment
 const {
   handleInvalidPath,
@@ -19,6 +19,7 @@ app.get("/api/reviews", getAllReviews);
 app.get("/api/reviews/:review_id/comments", getComments);
 app.post("/api/reviews/:review_id/comments", postComment);
 app.patch('/api/reviews/:review_id', patchReview);
+app.delete('/api/comments/:comment_id', deleteComment)
 
 app.use("*", handleInvalidPath);
 app.use(handleCustomErrors);
