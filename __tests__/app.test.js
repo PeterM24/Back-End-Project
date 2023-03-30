@@ -415,29 +415,39 @@ describe("checkValueExists util function", () => {
   });
 });
 
-describe('DELETE /api/comments/:comment_id', () => {
-  test('204: deletes comment and responds with no content', () => {
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: deletes comment and responds with no content", () => {
     return request(app)
-    .delete('/api/comments/1')
-    .expect(204)
-    .then(({body}) => {
-      expect(body).toEqual({})
-    })
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
   });
-  test('404: comment not found', () => {
+  test("404: comment not found", () => {
     return request(app)
-    .delete('/api/comments/1000')
-    .expect(404)
-    .then(({body}) => {
-      expect(body.msg).toEqual("Comment ID not found")
-    })
+      .delete("/api/comments/1000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Comment ID not found");
+      });
   });
-  test('400: Bad request - PSQL error handling when passed NaN', () => {
+  test("400: Bad request - PSQL error handling when passed NaN", () => {
     return request(app)
-    .delete('/api/comments/not_a_number')
-    .expect(400)
-    .then(({body}) => {
-      expect(body.msg).toEqual("Invalid ID, must be a number")
-    })
+      .delete("/api/comments/not_a_number")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid ID, must be a number");
+      });
+  });
+  test("204: comment should not exist after deleting", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(() => {
+        return checkValueExists("comments", "comment_id", 1).then((res) => {
+          expect(res).toBe(false);
+        });
+      });
   });
 });
