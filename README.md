@@ -1,13 +1,13 @@
-# Peter's House of Games API
+# 🧩 Peter's House of Games API
 
 An API for a backend server utilising a PSQL Database, populated with games reviews, comments, categories, several endpoints, and more...
 
 **Hosted version:** Head over to [**Peter's House of Games API**](https://house-of-games-0co6.onrender.com/api) to access a range of endpoints for this API. See ***'Using this hosted API'*** further down...
 
 ---
-## Set up & installation
+## Set up & installation ⚙️
 
-### Clone
+### Clone 
 
 Clone this repo using the following path, in a directory of choice:
 
@@ -53,13 +53,13 @@ This will populate the .development database. The .test database will setup and 
 npm test app.js
 ```
 ---
-## Using this hosted API
+# Using this hosted API 🔍
 
-### endpoints:
-
-https://house-of-games-0co6.onrender.com /endpoint
-
-**GET**
+```
+https://house-of-games-0co6.onrender.com <endpoint>
+```
+## endpoints:
+#### **GET**
 - /api
 - /api/categories
 - /api/reviews
@@ -67,11 +67,11 @@ https://house-of-games-0co6.onrender.com /endpoint
 - /api/reviews/:review_id/comments
 - /api/users
 
-**PATCH**
+#### **PATCH**
 - /api/reviews/:review_id
 
-**POST**
+#### **POST**
 - /api/reviews/:review_id/comments
 
-**DELETE**
+#### **DELETE**
 - /api/comments/:comment_id
