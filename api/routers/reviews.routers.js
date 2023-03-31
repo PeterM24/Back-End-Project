@@ -11,9 +11,7 @@ const {
 const reviewsRouter = require("express").Router();
 
 reviewsRouter.get("/", getReviews);
-reviewsRouter.get("/:review_id", getReviewsById);
-reviewsRouter.patch("/:review_id", patchReview);
-reviewsRouter.get("/:review_id/comments", getComments);
-reviewsRouter.post("/:review_id/comments", postComment);
+reviewsRouter.route("/:review_id").get(getReviewsById).patch(patchReview);
+reviewsRouter.route("/:review_id/comments").get(getComments).post(postComment);
 
 module.exports = reviewsRouter;
