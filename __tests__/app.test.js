@@ -60,6 +60,7 @@ describe("GET /api/reviews/:review_id", () => {
           category: "social deduction",
           created_at: expect.any(String),
           votes: 5,
+          comment_count: 3
         });
       });
   });
