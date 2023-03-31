@@ -642,4 +642,13 @@ describe("GET /api/users/:username", () => {
         })
       });
   });
+  test('404: username not found', () => {
+    return request(app)
+      .get("/api/users/not_found")
+      .expect(404)
+      .then(({body}) => {
+        console.log(body.msg)
+        expect(body.msg).toBe("User not found")
+      });
+  });
 });

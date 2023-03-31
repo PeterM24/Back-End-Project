@@ -6,8 +6,9 @@ exports.getUsers = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-exports.getUserById = async (req, res, next) => {
+exports.getUserById = (req, res, next) => {
   const { username } = req.params;
-  const user = await fetchUsers(username).catch((err) => next(err));
-  res.status(200).send({ user });
+  fetchUsers(username)
+  .then((user) => res.status(200).send({user}))
+  .catch((err) => next(err));
 };
