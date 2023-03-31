@@ -60,7 +60,7 @@ describe("GET /api/reviews/:review_id", () => {
           category: "social deduction",
           created_at: expect.any(String),
           votes: 5,
-          comment_count: 3
+          comment_count: 3,
         });
       });
   });
@@ -418,9 +418,7 @@ describe("checkValueExists util function", () => {
 
 describe("DELETE /api/comments/:comment_id", () => {
   test("204: deletes comment and responds with no content", () => {
-    return request(app)
-      .delete("/api/comments/1")
-      .expect(204);
+    return request(app).delete("/api/comments/1").expect(204);
   });
   test("404: comment not found", () => {
     return request(app)
@@ -450,7 +448,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
-describe('GET /api/users', () => {
+describe("GET /api/users", () => {
   test("200: should return an array of user objects with the correct properties", () => {
     return request(app)
       .get("/api/users")
@@ -467,7 +465,7 @@ describe('GET /api/users', () => {
         });
       });
   });
-  test('200: each user in users array should match object shape', () => {
+  test("200: each user in users array should match object shape", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
@@ -480,23 +478,23 @@ describe('GET /api/users', () => {
           expect(obj).toMatchObject({
             username: expect.any(String),
             name: expect.any(String),
-            avatar_url: expect.any(String)
-          })
+            avatar_url: expect.any(String),
+          });
         });
       });
   });
 });
 
-describe('GET /api/reviews?query=x', () => {
-  test('200: gets reviews by category=social-deduction', () => {
+describe("GET /api/reviews?query=x", () => {
+  test("200: gets reviews by category=social-deduction", () => {
     return request(app)
-    .get('/api/reviews?category=social-deduction')
-    .expect(200)
-    .then(({body}) => {
-      expect(body.reviews).toBeInstanceOf(Array)
-      expect(body.reviews).toHaveLength(11)
-      body.reviews.forEach(review => {
-        expect(review).toMatchObject({
+      .get("/api/reviews?category=social-deduction")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews).toBeInstanceOf(Array);
+        expect(body.reviews).toHaveLength(11);
+        body.reviews.forEach((review) => {
+          expect(review).toMatchObject({
             owner: expect.any(String),
             title: expect.any(String),
             review_id: expect.any(Number),
@@ -506,106 +504,127 @@ describe('GET /api/reviews?query=x', () => {
             votes: expect.any(Number),
             designer: expect.any(String),
             comment_count: expect.any(Number),
-        })
-      })
-    })
+          });
+        });
+      });
   });
-  test('200: gets reviews by category=dexterity', () => {
+  test("200: gets reviews by category=dexterity", () => {
     return request(app)
-    .get('/api/reviews?category=dexterity')
-    .expect(200)
-    .then(({body}) => {
-      expect(body.reviews).toBeInstanceOf(Array)
-      expect(body.reviews).toHaveLength(1)
-      body.reviews.forEach(review => {
-        expect(review).toMatchObject({
-          owner: expect.any(String),
-          title: expect.any(String),
-          review_id: expect.any(Number),
-          category: "dexterity",
-          review_img_url: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
-          designer: expect.any(String),
-          comment_count: expect.any(Number),
-        })
-      })
-    })
+      .get("/api/reviews?category=dexterity")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews).toBeInstanceOf(Array);
+        expect(body.reviews).toHaveLength(1);
+        body.reviews.forEach((review) => {
+          expect(review).toMatchObject({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: "dexterity",
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
   });
-  test('200: sort by votes column', () => {
+  test("200: sort by votes column", () => {
     return request(app)
-    .get("/api/reviews?sort_by=votes")
-    .expect(200)
-    .then(({ body }) => {
-      const { reviews } = body;
-      expect(reviews).toHaveLength(13);
-      expect(reviews).toBeSortedBy("votes", { descending: true });
-    });
+      .get("/api/reviews?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toHaveLength(13);
+        expect(reviews).toBeSortedBy("votes", { descending: true });
+      });
   });
-  test('200: sort by title column', () => {
+  test("200: sort by title column", () => {
     return request(app)
-    .get("/api/reviews?sort_by=title")
-    .expect(200)
-    .then(({ body }) => {
-      const { reviews } = body;
-      expect(reviews).toHaveLength(13);
-      expect(reviews).toBeSortedBy("title", { descending: true });
-    });
+      .get("/api/reviews?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toHaveLength(13);
+        expect(reviews).toBeSortedBy("title", { descending: true });
+      });
   });
-  test('200: order by asc', () => {
+  test("200: order by asc", () => {
     return request(app)
-    .get("/api/reviews?order=asc")
-    .expect(200)
-    .then(({ body }) => {
-      const { reviews } = body;
-      expect(reviews).toHaveLength(13);
-      expect(reviews).toBeSortedBy("created_at", { ascending: true });
-    });
+      .get("/api/reviews?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toHaveLength(13);
+        expect(reviews).toBeSortedBy("created_at", { ascending: true });
+      });
   });
-  test('200: order by desc', () => {
+  test("200: order by desc", () => {
     return request(app)
-    .get("/api/reviews?order=desc")
-    .expect(200)
-    .then(({ body }) => {
-      const { reviews } = body;
-      expect(reviews).toHaveLength(13);
-      expect(reviews).toBeSortedBy("created_at", { descending: true });
-    });
+      .get("/api/reviews?order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toHaveLength(13);
+        expect(reviews).toBeSortedBy("created_at", { descending: true });
+      });
   });
-  test('400: Bad request should return an error if sort_by column does not exist', () => {
+  test("400: Bad request should return an error if sort_by column does not exist", () => {
     return request(app)
-    .get("/api/reviews?sort_by=unknown")
-    .expect(400)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Invalid sort_by");
-    });
+      .get("/api/reviews?sort_by=unknown")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Invalid sort_by");
+      });
   });
-  test('400: Bad request returns an error if passed invalid order query: string', () => {
+  test("400: Bad request returns an error if passed invalid order query: string", () => {
     return request(app)
-    .get("/api/reviews?order=unknown")
-    .expect(400)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Invalid order: use DESC or ASC");
-    });
+      .get("/api/reviews?order=unknown")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Invalid order: use DESC or ASC");
+      });
   });
-  test('400: Bad request returns an error if passed invalid order query: num', () => {
+  test("400: Bad request returns an error if passed invalid order query: num", () => {
     return request(app)
-    .get("/api/reviews?order=1")
-    .expect(400)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Invalid order: use DESC or ASC");
-    });
+      .get("/api/reviews?order=1")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Invalid order: use DESC or ASC");
+      });
   });
-  test('404: category not found', () => {
+  test("404: category not found", () => {
     return request(app)
-    .get("/api/reviews?category=hello")
-    .expect(404)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Category not found");
-    });
+      .get("/api/reviews?category=hello")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Category not found");
+      });
+  });
+});
+
+describe("GET /api", () => {
+  test("200: should read and return endpoints.json file", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body: { endpoints } }) => {
+        expect(JSON.parse(endpoints)).toMatchObject({
+          "GET /api": expect.any(Object),
+          "GET /api/categories": expect.any(Object),
+          "GET /api/reviews/:review_id": expect.any(Object),
+          "GET /api/reviews": expect.any(Object),
+          "GET /api/reviews/:review_id/comments": expect.any(Object),
+          "GET /api/users": expect.any(Object),
+          "PATCH /api/reviews/:review_id": expect.any(Object),
+          "POST /api/reviews/:review_id/comments": expect.any(Object),
+          "DELETE /api/comments/:comment_id": expect.any(Object),
+        });
+      });
   });
 });
