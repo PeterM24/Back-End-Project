@@ -1,14 +1,19 @@
 const { fetchUsers } = require("../models/users.models");
 
-exports.getUsers = (req, res, next) => {
-  fetchUsers()
-    .then((users) => res.status(200).send({ users }))
-    .catch((err) => next(err));
+exports.getUsers = async (req, res, next) => {
+  try {
+    res.send({ users: await fetchUsers() });
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.getUserById = (req, res, next) => {
+exports.getUserById = async (req, res, next) => {
   const { username } = req.params;
-  fetchUsers(username)
-  .then((user) => res.status(200).send({user}))
-  .catch((err) => next(err));
+
+  try {
+    res.send({ user: await fetchUsers(username) });
+  } catch (err) {
+    next(err);
+  }
 };
