@@ -1,4 +1,7 @@
-const { getComments, postComment } = require("../controllers/comments.controllers");
+const {
+  getComments,
+  postComment,
+} = require("../controllers/comments.controllers");
 const {
   getReviews,
   getReviewsById,
@@ -12,6 +15,5 @@ reviewsRouter.get("/:review_id", getReviewsById);
 reviewsRouter.patch("/:review_id", patchReview);
 reviewsRouter.get("/:review_id/comments", getComments);
 reviewsRouter.post("/:review_id/comments", postComment);
-
 
 module.exports = reviewsRouter;
