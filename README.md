@@ -2,7 +2,7 @@
 
 An API for a backend server utilising a PSQL Database, populated with games reviews, comments, categories, several endpoints, and more...
 
-**Hosted version:** Head over to [**Peter's House of Games API**](https://house-of-games-0co6.onrender.com/api) to access a range of endpoints for this API.
+**Hosted version:** Head over to [**Peter's House of Games API**](https://house-of-games-0co6.onrender.com/api) to access a range of endpoints for this API. See ***'Using this hosted API'*** further down...
 
 ---
 ## Set up & installation
@@ -58,6 +58,7 @@ npm test app.js
 ### endpoints:
 
 https://house-of-games-0co6.onrender.com /endpoint
+
 **GET**
 - /api
 - /api/categories
