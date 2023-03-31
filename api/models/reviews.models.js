@@ -1,10 +1,9 @@
 const db = require("../../db/connection");
 const { checkValueExists } = require("../utils");
 
-exports.fetchReviewsById = (id) => {
-  return db
-    .query(
-      `
+exports.fetchReviewsById = async (id) => {
+  const reviews = await db.query(
+    `
       SELECT reviews.*, COUNT(comments.review_id)::INT AS COMMENT_COUNT
       FROM reviews
       LEFT JOIN comments
@@ -12,13 +11,12 @@ exports.fetchReviewsById = (id) => {
       WHERE reviews.review_id = $1
       GROUP BY reviews.review_id;
   `,
-      [id]
-    )
-    .then((res) => {
-      if (res.rowCount === 0)
-        return Promise.reject({ status: 404, msg: "ID not found" });
-      return res.rows[0];
-    });
+    [id]
+  );
+
+  if (reviews.rowCount === 0)
+    return Promise.reject({ status: 404, msg: "ID not found" });
+  return reviews.rows[0];
 };
 
 exports.fetchAllReviews = async (
@@ -26,27 +24,39 @@ exports.fetchAllReviews = async (
   sort_by = "created_at",
   category
 ) => {
-  const validSortBy = ['title', 'owner', 'category', 'created_at', 'votes', 'designer' ]
-  const validOrder = ['ASC', 'DESC']
+  const validSortBy = [
+    "title",
+    "owner",
+    "category",
+    "created_at",
+    "votes",
+    "designer",
+  ];
+  const validOrder = ["ASC", "DESC"];
 
   if (!validSortBy.includes(sort_by.toLowerCase())) {
     return Promise.reject({
       status: 400,
-      msg: "Invalid sort_by"
-    })
+      msg: "Invalid sort_by",
+    });
   }
 
   if (!validOrder.includes(order.toUpperCase())) {
     return Promise.reject({
       status: 400,
-      msg: "Invalid order: use DESC or ASC"
-    })
+      msg: "Invalid order: use DESC or ASC",
+    });
   }
   if (category) {
-    const categoryExists = await checkValueExists('categories', 'slug', category.split("-").join(" "))
-    if (!categoryExists) return Promise.reject({status: 404, msg: "Category not found"})
+    const categoryExists = await checkValueExists(
+      "categories",
+      "slug",
+      category.split("-").join(" ")
+    );
+    if (!categoryExists)
+      return Promise.reject({ status: 404, msg: "Category not found" });
   }
- 
+
   let queryStr = `
   SELECT reviews.*, COUNT(comments.review_id)::INT AS COMMENT_COUNT
   FROM reviews

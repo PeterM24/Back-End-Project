@@ -4,23 +4,28 @@ const {
   deleteCommentById,
 } = require("../models/comments.models");
 
-exports.getComments = (req, res, next) => {
+exports.getComments = async (req, res, next) => {
   const { review_id } = req.params;
-  fetchCommentsById(review_id)
-    .then((comments) => res.status(200).send({ comments }))
-    .catch((err) => next(err));
+  try {
+    res.send({ comments: await fetchCommentsById(review_id) });
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.postComment = (req, res, next) => {
-  addComment(req.params, req.body)
-    .then((comment) => res.status(201).send({ comment }))
-    .catch((err) => {
-      next(err);
-    });
+exports.postComment = async (req, res, next) => {
+  try {
+    res.status(201).send({ comment: await addComment(req.params, req.body) });
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.deleteComment = (req, res, next) => {
-  deleteCommentById(req.params)
-    .then(() => res.status(204).end())
-    .catch((err) => next(err));
+exports.deleteComment = async (req, res, next) => {
+  try {
+    await deleteCommentById(req.params);
+    res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
 };
