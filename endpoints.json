@@ -100,7 +100,7 @@
   "PATCH /api/reviews/:review_id": {
     "description": "updates the votes count for a review and serves an array of the updated review",
     "queries": [],
-    "requestBody": [{ "inc_votes": 1 }, { "inc_votes": -1 }],
+    "requestBody": { "inc_votes": 1 },
     "exampleResponse": {
       "review": [
         {
