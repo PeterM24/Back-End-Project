@@ -628,3 +628,18 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  test("200: should fetch user data of passed username parametric", () => {
+    return request(app)
+      .get("/api/users/dav3rid")
+      .expect(200)
+      .then(({ body: { user } }) => {
+        expect(user).toMatchObject({
+          username: "dav3rid",
+          name: "dave",
+          avatar_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+        })
+      });
+  });
+});

@@ -1,11 +1,14 @@
 const db = require("../../db/connection");
 
-exports.fetchAllUsers = () => {
-  return db
-    .query(
-      `
-  SELECT * FROM users;
-  `
-    )
-    .then((res) => res.rows);
+exports.fetchUsers = async (username) => {
+  let queryStr = `SELECT * FROM users `;
+  let user = [];
+  username
+    ? ((queryStr += `WHERE username = $1`), user.push(username))
+    : queryStr;
+  const res = await db.query(queryStr, user);
+  
+  return username ? res.rows[0] : res.rows;
+
+  //     .then((res) => res.rows);
 };
