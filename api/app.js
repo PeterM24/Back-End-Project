@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
 
+const cors = require("cors");
+
+app.use(cors());
+
 const err = require("./controllers/error-handling.controllers");
 const apiRouter = require("./routers/api.routers");
 const categoriesRouters = require("./routers/categories.routers");
